@@ -1,0 +1,23 @@
+[package]
+name = "lob_rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "lob_rs"
+crate-type = ["cdylib"]
+
+[features]
+python = ["pyo3/extension-module"]
+nodejs = ["napi-derive"]
+
+[dependencies]
+pyo3 = { version = "0.21", optional = true }
+napi = { version = "2", optional = true }
+napi-derive = { version = "2", optional = true }
+ordered-float = "5.0.0"
+
+[dependencies.serde]
+version = "1"
+features = ["derive"]
+optional = true

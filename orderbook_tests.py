@@ -29,27 +29,27 @@ class OrderTests(TestCase):
         self.assertEqual(len(lob.best_ask), 1)
         self.assertIsNone(bid_order.next_item)
         self.assertIsNone(bid_order.previous_item)
-        self.assertEqual(lob.best_bid.orders.head, bid_order)
-        self.assertEqual(lob.best_ask.orders.head, ask_order)
+        self.assertEqual(lob.best_bid.orders.head, bid_order.uid)
+        self.assertEqual(lob.best_ask.orders.head, ask_order.uid)
         self.assertIn(1, lob._orders)
 
         # Assert that updating an order works
         updated_bid_order = Order(uid=1, is_bid=True, size=4, price=100, timestamp=bid_order.timestamp)
         lob.process(updated_bid_order)
-        self.assertEqual(lob.best_bid.orders.head.size, 4)
+        self.assertEqual(lob._orders[lob.best_bid.orders.head].size, 4)
         self.assertEqual(lob.best_bid.volume, 400)
 
         updated_ask_order = Order(uid=2, is_bid=True, size=4, price=200, timestamp=ask_order.timestamp)
         lob.process(updated_ask_order)
-        self.assertEqual(lob.best_ask.orders.head.size, 4)
+        self.assertEqual(lob._orders[lob.best_ask.orders.head].size, 4)
         self.assertEqual(lob.best_ask.volume, 800)
 
         # Assert that adding an additional order to a limit level updates the
         # doubly linked list correctly
         bid_order_2 = Order(uid=3, is_bid=True, size=5, price=100)
         lob.process(bid_order_2)
-        self.assertEqual(lob.best_bid.orders.head.next_item, bid_order_2)
-        self.assertEqual(lob.best_bid.orders.tail, bid_order_2)
+        self.assertEqual(lob._orders[lob.best_bid.orders.head].next_item, bid_order_2.uid)
+        self.assertEqual(lob.best_bid.orders.tail, bid_order_2.uid)
         self.assertEqual(len(lob.best_bid), 2)
         
     def test_removing_orders_works(self):
@@ -67,14 +67,14 @@ class OrderTests(TestCase):
         # orders resets the tail, head and previous / next items accordingly
         removed_bid_order = Order(uid=1, is_bid=True, size=0, price=100)
         self.assertEqual(len(lob.best_bid), 2)
-        self.assertEqual(lob.best_bid.orders.head, bid_order)
-        self.assertEqual(lob.best_bid.orders.tail, bid_order_2)
+        self.assertEqual(lob.best_bid.orders.head, bid_order.uid)
+        self.assertEqual(lob.best_bid.orders.tail, bid_order_2.uid)
         lob.process(removed_bid_order)
         self.assertEqual(len(lob.best_bid), 1)
-        self.assertEqual(lob.best_bid.orders.head, bid_order_2)
-        self.assertEqual(lob.best_bid.orders.tail, bid_order_2)
-        self.assertIsNone(lob.best_bid.orders.head.next_item)
-        self.assertIsNone(lob.best_bid.orders.head.previous_item)
+        self.assertEqual(lob.best_bid.orders.head, bid_order_2.uid)
+        self.assertEqual(lob.best_bid.orders.tail, bid_order_2.uid)
+        self.assertIsNone(lob._orders[bid_order_2.uid].next_item)
+        self.assertIsNone(lob._orders[bid_order_2.uid].previous_item)
         self.assertNotIn(removed_bid_order.uid, lob._orders)
         self.assertIn(removed_bid_order.price, lob._price_levels)
 
@@ -125,3 +125,23 @@ class OrderTests(TestCase):
         for side in ('bids', 'asks'):
             self.assertEqual(len(levels[side]), 2)
         
+
+    def test_execute_flow(self):
+        lob = LimitOrderBook()
+        bid1 = Order(uid=1, is_bid=True, size=5, price=100)
+        bid2 = Order(uid=2, is_bid=True, size=7, price=100)
+        lob.process(bid1)
+        lob.process(bid2)
+        removed = lob.pop_best_bid()
+        self.assertEqual(removed.uid, 1)
+        self.assertEqual(len(lob.best_bid), 1)
+        self.assertEqual(lob.best_bid.orders.head, 2)
+
+    def test_levels_sorted_after_random_inserts(self):
+        lob = LimitOrderBook()
+        prices = [100, 50, 200, 150, 75, 175]
+        for i, p in enumerate(prices, 1):
+            lob.process(Order(uid=i, is_bid=(i % 2 == 1), size=5, price=p))
+        levels = lob.levels()
+        self.check_levels_format(levels)
+
