@@ -1,0 +1,29 @@
+name: Python CI
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+      - name: Install uv and maturin
+        run: |
+          pip install uv maturin
+      - name: Build wheel
+        run: |
+          maturin build --manifest-path bindings/python/rust_core/Cargo.toml --release --features python --strip -q
+      - name: Install wheel
+        run: |
+          pip install bindings/python/rust_core/target/wheels/*.whl -q
+      - name: Run tests
+        run: |
+          python -m unittest orderbook_tests.py -v
+      - name: Run benchmark
+        run: |
+          python benchmark.py

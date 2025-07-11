@@ -1,5 +1,5 @@
 # HFT-Orderbook
-Limit Order Book for high-frequency trading (HFT), as described by WK Selph, implemented in C.
+Limit Order Book for high-frequency trading (HFT). The project now features a Rust core library with Python and Node.js bindings for easy integration.
 
 Based on WK Selph's Blogpost:
 
@@ -88,3 +88,23 @@ https://goo.gl/KF1SRm
     that it is important to be able to update Book.lowestSell/highestBuy
     in O(1) time when a limit is deleted (which is why each Limit has a Limit
     *parent) so that GetBestBid/Offer can remain O(1)."
+
+## Benchmarks
+Run `benchmark.py` after building the wheel to measure add and execute performance.
+
+## Rust core and bindings
+The `rust_core` crate contains the core implementation and lives under
+`bindings/python`. Python and Node.js native extensions are kept in
+the `bindings` directory. Use feature flags to compile Python or Node.js bindings.
+
+### Python
+Build and install a wheel:
+```bash
+maturin build --manifest-path bindings/python/rust_core/Cargo.toml --release --features python
+```
+
+### Node.js
+Install `@napi-rs/cli` and build the Node addon:
+```bash
+napi build --manifest-path bindings/python/rust_core/Cargo.toml --release
+```
