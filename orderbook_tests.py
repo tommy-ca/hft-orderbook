@@ -5,7 +5,7 @@ from unittest import TestCase
 # Import Third-Party
 
 # Import Homebrew
-from lob import LimitOrderBook, Order
+from bindings.python.lob import LimitOrderBook, Order
 
 # Init Logging Facilities
 log = logging.getLogger(__name__)

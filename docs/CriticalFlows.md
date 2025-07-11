@@ -1,8 +1,8 @@
 # Critical Code Flows
 
 This guide outlines the most important execution paths through the code base. The
-core order book is now implemented in Rust. Both Python (`lob.py`) and Node.js
-bindings invoke the same Rust functions so the flows below apply across all
+core order book is now implemented in Rust. Both Python (`bindings/python/lob.py`)
+and Node.js bindings invoke the same Rust functions so the flows below apply across all
 languages.
 
 ## Adding or Updating an Order

@@ -1,5 +1,5 @@
 import time
-from lob import LimitOrderBook, Order
+from bindings.python.lob import LimitOrderBook, Order
 
 
 def benchmark_add_orders(n):

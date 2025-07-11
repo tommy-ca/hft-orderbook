@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository provides a high performance Limit Order Book (LOB) implementation inspired by WK Selph's "How to Build a Fast Limit Order Book" article. The core logic is now written in Rust for safety and performance, with bindings for Python (`lob.py`) and Node.js.
+This repository provides a high performance Limit Order Book (LOB) implementation inspired by WK Selph's "How to Build a Fast Limit Order Book" article. The core logic is now written in Rust for safety and performance, with bindings for Python (`bindings/python/lob.py`) and Node.js.
 
 ## Goals
 

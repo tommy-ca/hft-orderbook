@@ -1,0 +1,9 @@
+{
+  "name": "lob-rs",
+  "version": "0.1.0",
+  "main": "index.js",
+  "files": ["index.js", "lob_rs.*"],
+  "scripts": {
+    "test": "node test.js"
+  }
+}

@@ -93,16 +93,16 @@ https://goo.gl/KF1SRm
 Run `benchmark.py` after building the wheel to measure add and execute performance.
 
 ## Rust core and bindings
-The `rust_core` crate contains the core implementation and is built independently. Use feature flags to compile Python or Node.js bindings.
+The `rust_core` crate contains the core implementation and is built independently. Python and Node.js bindings live under the `bindings/` directory. Use feature flags to compile either binding.
 
 ### Python
-Build and install a wheel:
+Bindings are located in `bindings/python`. Build and install a wheel:
 ```bash
 maturin build --manifest-path rust_core/Cargo.toml --release --features python
 ```
 
 ### Node.js
-Install `@napi-rs/cli` and build the Node addon:
+Bindings are located in `bindings/nodejs`. Install `@napi-rs/cli` and build the Node addon:
 ```bash
 napi build --manifest-path rust_core/Cargo.toml --release
 ```
